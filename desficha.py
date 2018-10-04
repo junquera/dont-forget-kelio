@@ -29,13 +29,8 @@ for device in iter(monitor.poll, None):
 from subprocess import call
 
 for device in iter(monitor.poll, None):
-    if 'BUSNUM' in device and device.action == 'remove':
-        if device.get('BUSNUM') == d:
-            for _ in range(3):
-                call(['/home/junquera/desficha.sh'])
-
-# "idVendor"
-# "idProduct"
-# "manufacturer"
-# "product"
-# "serial"
+    if 'BUSNUM' in device:
+        if device.get('BUSNUM') == d and device.action == 'add':
+            call(['/home/junquera/desficha/ficha.sh'])
+        if device.get('BUSNUM') == d and device.action == 'remove':
+            call(['/home/junquera/desficha/desficha.sh'])
