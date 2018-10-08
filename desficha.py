@@ -10,7 +10,8 @@ monitor = pyudev.Monitor.from_netlink(context)
 
 print("Insert device")
 
-d = None
+bus_num = None
+device_id = None
 
 for device in iter(monitor.poll, None):
     try:
@@ -21,16 +22,21 @@ for device in iter(monitor.poll, None):
             id_device_id = "%s %s" % (device.get('ID_VENDOR_ID'), device.get('ID_MODEL_ID'))
             ok = input("%s (%s). Ok? (y/N) " % (id_device, id_device_id))
             if ok[0].lower() == 'y':
-                d = device.get('BUSNUM')
+                bus_num = device.get('BUSNUM')
+                device_id = id_device_id
                 break
     except Exception as e:
         pass
 
 from subprocess import call
-
+import os
 for device in iter(monitor.poll, None):
     if 'BUSNUM' in device:
-        if device.get('BUSNUM') == d and device.action == 'add':
-            call(['/home/junquera/desficha/ficha.sh'])
-        if device.get('BUSNUM') == d and device.action == 'remove':
-            call(['/home/junquera/desficha/desficha.sh'])
+        id_device_id = "%s %s" % (device.get('ID_VENDOR_ID'), device.get('ID_MODEL_ID'))
+
+        if device_id == id_device_id and device.action == 'add':
+            bus_num = device.get('BUSNUM')
+            call([os.path.abspath('.') + '/ficha.sh'])
+
+        if device.get('BUSNUM') == bus_num and device.action == 'remove':
+            call([os.path.abspath('.') + '/desficha.sh'])
