@@ -1,7 +1,7 @@
 #!/bin/bash
-prev_state=$(amixer get Master| egrep -o -e '\[([^\]*)\]'| cut -d' ' -f 2 | tr -d '[' | tr -d ']' | tail -n 1)
-prev_vol=$(amixer get Master| egrep -o -e '\[([^\]*)\]'| cut -d' ' -f 1 | tr -d '[' | tr -d ']' | tail -n 1)
+prev_state=$(amixer -c 1 get Master | egrep -o -e '\[([^\]*)\]'| cut -d' ' -f 3 | tail -1 | sed -nE "s/\[([^\)]*)\]/\1/p")
+prev_vol=$(amixer -c 1 get Master | egrep -o -e '\[([^\]*)\]'| cut -d' ' -f 1 | tail -1 | sed -nE "s/\[([^\)]*)\]/\1/p")
 
-amixer set Master 100% on
-paplay $(pwd)/desficha.wav
-amixer set Master $prev_vol $prev_state
+amixer -c 1 set Master 100% on;
+paplay $(pwd)/desficha.wav;
+amixer -c 1 set Master $prev_vol $prev_state;
